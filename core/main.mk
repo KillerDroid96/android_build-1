@@ -18,11 +18,11 @@ endif
 
 .PHONY: run_soong_ui
 run_soong_ui:
-	+@prebuilts/build-tools/$(host_prebuilts)/bin/makeparallel --ninja build/soong/soong_ui.bash --make-mode $(MAKECMDGOALS)
+  +@prebuilts/build-tools/$(host_prebuilts)/bin/makeparallel --ninja build/soong/soong_ui.bash --make-mode $(MAKECMDGOALS)
 
 .PHONY: $(MAKECMDGOALS)
 $(sort $(MAKECMDGOALS)) : run_soong_ui
-	@#empty
+  @#empty
 
 else # KATI
 
@@ -47,6 +47,26 @@ droid_targets:
 # Set up various standard variables based on configuration
 # and host information.
 include $(BUILD_SYSTEM)/config.mk
+
+# Used to force goals to build.  Only use for conditionally defined goals.
+.PHONY: FORCE
+FORCE:
+
+# These goals don't need to collect and include Android.mks/CleanSpec.mks
+# in the source tree.
+dont_bother_goals := clean clobber dataclean installclean \
+    help out \
+    snod systemimage-nodeps \
+    stnod systemtarball-nodeps \
+    userdataimage-nodeps userdatatarball-nodeps \
+    cacheimage-nodeps \
+    vendorimage-nodeps \
+    systemotherimage-nodeps \
+    ramdisk-nodeps \
+    bootimage-nodeps \
+    recoveryimage-nodeps \
+    product-graph dump-products \
+    burst novo surgical biopsy
 
 ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
 dont_bother := true
@@ -102,10 +122,10 @@ $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 # Clean rules
 .PHONY: clean-dex-files
 clean-dex-files:
-	$(hide) find $(OUT_DIR) -name "*.dex" | xargs rm -f
-	$(hide) for i in `find $(OUT_DIR) -name "*.jar" -o -name "*.apk"` ; do ((unzip -l $$i 2> /dev/null | \
-				grep -q "\.dex$$" && rm -f $$i) || continue ) ; done
-	@echo "All dex files and archives containing dex files have been removed."
+  $(hide) find $(OUT_DIR) -name "*.dex" | xargs rm -f
+  $(hide) for i in `find $(OUT_DIR) -name "*.jar" -o -name "*.apk"` ; do ((unzip -l $$i 2> /dev/null | \
+        grep -q "\.dex$$" && rm -f $$i) || continue ) ; done
+  @echo "All dex files and archives containing dex files have been removed."
 
 # Include the google-specific config
 -include vendor/google/build/config.mk
@@ -230,9 +250,9 @@ endif
 ADDITIONAL_BUILD_PROPERTIES += ro.treble.enabled=${PRODUCT_FULL_TREBLE}
 
 $(KATI_obsolete_var PRODUCT_FULL_TREBLE,\
-	Code should be written to work regardless of a device being Treble or \
-	variables like PRODUCT_SEPOLICY_SPLIT should be used until that is \
-	possible.)
+  Code should be written to work regardless of a device being Treble or \
+  variables like PRODUCT_SEPOLICY_SPLIT should be used until that is \
+  possible.)
 
 # Sets ro.actionable_compatible_property.enabled to know on runtime whether the whitelist
 # of actionable compatible properties is enabled or not.
@@ -439,7 +459,7 @@ NOTICE-TARGET-%: ;
 define register_module_install_path
 .PHONY: GET-MODULE-INSTALL-PATH-$(1)
 GET-MODULE-INSTALL-PATH-$(1):
-	echo 'INSTALL-PATH: $(1) $(ALL_MODULES.$(1).INSTALLED)'
+  echo 'INSTALL-PATH: $(1) $(ALL_MODULES.$(1).INSTALLED)'
 endef
 
 SORTED_ALL_MODULES := $(sort $(ALL_MODULES))
@@ -502,8 +522,8 @@ endif
 known_custom_modules := $(filter $(ALL_MODULES),$(CUSTOM_MODULES))
 unknown_custom_modules := $(filter-out $(ALL_MODULES),$(CUSTOM_MODULES))
 CUSTOM_MODULES := \
-	$(call module-installed-files,$(known_custom_modules)) \
-	$(unknown_custom_modules)
+  $(call module-installed-files,$(known_custom_modules)) \
+  $(unknown_custom_modules)
 
 # -------------------------------------------------------------------
 # Define dependencies for modules that require other modules.
@@ -876,14 +896,14 @@ ifeq ($($(1).MISSING),true)
 $$(my_link_type_file): $(CHECK_LINK_TYPE)
 endif
 $$(my_link_type_file): $$(my_link_type_deps)
-	@echo Check module type: $$@
-	$$(hide) mkdir -p $$(dir $$@) && rm -f $$@
+  @echo Check module type: $$@
+  $$(hide) mkdir -p $$(dir $$@) && rm -f $$@
 ifeq ($($(1).MISSING),true)
-	$$(hide) $(CHECK_LINK_TYPE) --makefile $($(1).MAKEFILE) --module $(link-type-name) \
-	  --type "$($(1).TYPE)" $(addprefix --allowed ,$($(1).ALLOWED)) \
-	  $(addprefix --warn ,$($(1).WARN)) $$(PRIVATE_DEPS)
+  $$(hide) $(CHECK_LINK_TYPE) --makefile $($(1).MAKEFILE) --module $(link-type-name) \
+    --type "$($(1).TYPE)" $(addprefix --allowed ,$($(1).ALLOWED)) \
+    $(addprefix --warn ,$($(1).WARN)) $$(PRIVATE_DEPS)
 endif
-	$$(hide) echo "$($(1).TYPE)" >$$@
+  $$(hide) echo "$($(1).TYPE)" >$$@
 endef
 
 $(foreach lt,$(ALL_LINK_TYPES),\
@@ -1127,22 +1147,22 @@ auxiliary: $(INSTALLED_AUX_TARGETS)
 # Build files and then package it into the rom formats
 .PHONY: droidcore
 droidcore: files \
-	systemimage \
-	$(INSTALLED_RAMDISK_TARGET) \
-	$(INSTALLED_BOOTIMAGE_TARGET) \
-	$(INSTALLED_RECOVERYIMAGE_TARGET) \
-	$(INSTALLED_VBMETAIMAGE_TARGET) \
-	$(INSTALLED_USERDATAIMAGE_TARGET) \
-	$(INSTALLED_CACHEIMAGE_TARGET) \
-	$(INSTALLED_BPTIMAGE_TARGET) \
-	$(INSTALLED_VENDORIMAGE_TARGET) \
-	$(INSTALLED_PRODUCTIMAGE_TARGET) \
-	$(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
-	$(INSTALLED_FILES_FILE) \
-	$(INSTALLED_FILES_FILE_VENDOR) \
-	$(INSTALLED_FILES_FILE_PRODUCT) \
-	$(INSTALLED_FILES_FILE_SYSTEMOTHER) \
-	soong_docs
+  systemimage \
+  $(INSTALLED_RAMDISK_TARGET) \
+  $(INSTALLED_BOOTIMAGE_TARGET) \
+  $(INSTALLED_RECOVERYIMAGE_TARGET) \
+  $(INSTALLED_VBMETAIMAGE_TARGET) \
+  $(INSTALLED_USERDATAIMAGE_TARGET) \
+  $(INSTALLED_CACHEIMAGE_TARGET) \
+  $(INSTALLED_BPTIMAGE_TARGET) \
+  $(INSTALLED_VENDORIMAGE_TARGET) \
+  $(INSTALLED_PRODUCTIMAGE_TARGET) \
+  $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
+  $(INSTALLED_FILES_FILE) \
+  $(INSTALLED_FILES_FILE_VENDOR) \
+  $(INSTALLED_FILES_FILE_PRODUCT) \
+  $(INSTALLED_FILES_FILE_SYSTEMOTHER) \
+  soong_docs
 
 # dist_files only for putting your library into the dist directory with a full build.
 .PHONY: dist_files
@@ -1280,31 +1300,73 @@ $(foreach module,$(sample_MODULES),$(eval $(call \
 sample_ADDITIONAL_INSTALLED := \
         $(filter-out $(modules_to_install) $(modules_to_check),$(sample_MODULES))
 samplecode: $(sample_APKS_COLLECTION)
-	@echo "Collect sample code apks: $^"
-	# remove apks that are not intended to be installed.
-	rm -f $(sample_ADDITIONAL_INSTALLED)
+  @echo "Collect sample code apks: $^"
+  # remove apks that are not intended to be installed.
+  rm -f $(sample_ADDITIONAL_INSTALLED)
 endif  # samplecode in $(MAKECMDGOALS)
 
 .PHONY: findbugs
 findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
 
+
 .PHONY: findlsdumps
 findlsdumps: $(FIND_LSDUMPS_FILE)
+
+.PHONY: clean
+clean:
+  @rm -rf $(OUT_DIR)/*
+  @echo -e ${CL_GRN}"Entire build directory removed."${CL_RST}
+
+.PHONY: clobber
+clobber: clean
+
+# This should be almost as good as a clobber but keeping many of the time intensive files - DHO
+.PHONY: novo
+novo:
+  @rm -rf $(OUT_DIR)/target/*
+  @echo -e ${CL_GRN}"Target directory removed."${CL_RST}
+
+# This is designed for building in memory.  Clean products, but keep common files - DHO
+.PHONY: burst
+burst:
+  @rm -rf $(OUT_DIR)/target/product/*
+  @echo -e ${CL_GRN}"Product directory removed."${CL_RST}
+
+# This is designed for building in memory + keeping smaller build folders + common files - DHO
+.PHONY: surgical
+surgical:
+  @rm -rf $(OUT_DIR)/target/product/*/obj/
+  @rm -rf $(OUT_DIR)/target/product/*/symbols/
+  @rm -rf $(OUT_DIR)/target/product/*/flash_*-ota-eng.$(USER).zip
+  @rm -rf $(OUT_DIR)/target/product/*/system.img
+  @rm -rf $(OUT_DIR)/target/product/*/userdata.img
+  @echo -e ${CL_GRN}"Surgical Strike Completed."${CL_RST}
+
+# This is designed for building on SSD but to whittle away at the bulk file size - DHO
+.PHONY: biopsy
+biopsy:
+  @rm -rf $(OUT_DIR)/target/product/*/flash_*-ota-eng.$(USER).zip
+  @rm -rf $(OUT_DIR)/target/product/*/system.img
+  @rm -rf $(OUT_DIR)/target/product/*/userdata.img
+  @rm -rf $(OUT_DIR)/target/product/*/system/app/*
+  @echo -e ${CL_GRN}"Surgical Strike Completed."${CL_RST}
+
+# The rules for dataclean and installclean are defined in cleanbuild.mk.
 
 #xxx scrape this from ALL_MODULE_NAME_TAGS
 .PHONY: modules
 modules:
-	@echo "Available sub-modules:"
-	@echo "$(call module-names-for-tag-list,$(ALL_MODULE_TAGS))" | \
-	      tr -s ' ' '\n' | sort -u | $(COLUMN)
+  @echo "Available sub-modules:"
+  @echo "$(call module-names-for-tag-list,$(ALL_MODULE_TAGS))" | \
+        tr -s ' ' '\n' | sort -u | $(COLUMN)
 
 .PHONY: nothing
 nothing:
-	@echo Successfully read the makefiles.
+  @echo Successfully read the makefiles.
 
 .PHONY: tidy_only
 tidy_only:
-	@echo Successfully make tidy_only.
+  @echo Successfully make tidy_only.
 
 ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 .PHONY: ndk
