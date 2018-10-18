@@ -847,30 +847,39 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print(" /_/  |_/_/ /_/\__,_/_/   \____/_/\__,_/    ");
   script.Print("                                            ");
 
-  buildid = target_info.GetBuildProp("ro.modversion")
-  androidver = target_info.GetBuildProp("ro.build.version.release")
+  androidver = target_info.GetBuildProp("ro.crdroid.version")
+  romid = target_info.GetBuildProp("ro.modversion")
   buildtype = target_info.GetBuildProp("ro.build.type")
-  androidver = target_info.GetBuildProp("ro.build.id")
   buildday = target_info.GetBuildProp("ro.build.date")
   securep = target_info.GetBuildProp("ro.build.version.security_patch")
   buildhst = target_info.GetBuildProp("ro.build.host")
   maintainer = target_info.GetBuildProp("ro.build.user")
+  manufacturer = target_info.GetBuildProp("ro.product.manufacturer")
   device = target_info.GetBuildProp("ro.product.name")
   codename = target_info.GetBuildProp("ro.lineage.device")
+  kernel = ("/home/killerdroid96/Github/CRD/out/target/product/dumpling/obj/KERNEL_OBJ/include/config/kernel.release")
+  kernelver = open(kernel).read()
+  modem = target_info.GetBuildProp("ro.build.expect.modem")
+  firmware = target_info.GetBuildProp("ro.build.expect.firmware")
   script.Print(" ===============================================");
-  script.Print(" Android Version  : %s"%(androidver));
-  script.Print(" crDroid Version  : %s"%(buildid));
-  script.Print(" Security Patch   : %s"%(securep));  
+  script.Print(" crDroid Version  : %s"%(romid));
+  script.Print(" Kernel Version   : %s"%(kernelver)); 
   script.Print(" Build Date       : %s"%(buildday));
   script.Print(" ===============================================");
   script.Print(" Build Type       : %s"%(buildtype));    
   script.Print(" Build Host       : %s"%(buildhst));     
   script.Print(" Maintainer       : %s"%(maintainer));   
   script.Print(" ===============================================");
+  script.Print(" Manufacturer     : %s"%(manufacturer));
   script.Print(" Device           : %s"%(device));           
-  script.Print(" Codename         : %s"%(codename));       
+  script.Print(" Codename         : %s"%(codename));
+  script.Print(" ===============================================");
+  script.Print(" Android Version  : %s"%(androidver));
+  script.Print(" Firmware Version : %s"%(firmware)); 
+  script.Print(" Security Patch   : %s"%(securep));  
+  script.Print(" Modem Version    : %s"%(modem)); 
   script.Print(" ==============================================="); 
-
+  
   if OPTIONS.wipe_user_data:
     system_progress -= 0.1
   if HasVendorPartition(input_zip):
